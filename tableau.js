@@ -45,6 +45,9 @@ Tableau.prototype.appendTable = function(columns, rows, width, height) {
       // Set dimensions of div
       currentDiv.style.height = height + "px";
       currentDiv.style.width = width + "px";
+      currentDiv.addEventListener("drop", this.drop.bind(this));
+      currentDiv.addEventListener("dragover", this.dragover.bind(this));
+
       // Add images for testing purposes
       // var currentImg = document.createElement("img");
       // currentImg.setAttribute("src", "images/back.bmp");
@@ -57,6 +60,26 @@ Tableau.prototype.appendTable = function(columns, rows, width, height) {
   }
   // Append table to body of document
   document.body.appendChild(newTable);
+};
+
+// Helper to determine whether a cell is a valid target
+Tableau.prototype.validTarget = function(card, destination) {
+  return destination.className == this.name;
+};
+
+Tableau.prototype.dragover = function(event) {
+  console.log(event.target.className);
+  if(this.validTarget(null, event.target)) {
+    event.preventDefault();
+  }
+};
+
+Tableau.prototype.drop = function(event) {
+  var cell = event.target;
+  // Clear the cell
+  // cell.removeChild(cell.firstChild);
+  var data = event.dataTransfer.getData("text");
+  cell.appendChild(document.getElementById(data));
 };
 
 // Class method to generate tableau and place it on the DOM

@@ -77,7 +77,7 @@ Deck.prototype.deal = function(tableau) {
     var imageNode = document.createElement("img");
     imageNode.setAttribute("src", src);
     imageNode.setAttribute("id", cardList[i].id);
-    imageNode.addEventListener("click", this.clickie.bind(this));
+    imageNode.addEventListener("dragstart", this.dragstart.bind(this));
     cellList[i].appendChild(imageNode);
   }
 }
@@ -95,7 +95,8 @@ Deck.prototype.findCardById = function(id) {
 }
 
 
-Deck.prototype.clickie = function() {
+Deck.prototype.dragstart = function(event) {
   var card = this.findCardById(event.target.id);
   console.log("You clicked " + card.name);
+  event.dataTransfer.setData("text", event.target.id);
 }
