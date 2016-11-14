@@ -85,6 +85,12 @@ var cellEmpty = function(cell) {
   return cell.firstChild == null;
 };
 
+var clearCell = function(cell) {
+ while(cell.firstChild) {
+  cell.removeChild(cell.firstChild);
+ }
+};
+
 Tableau.prototype.firstEmptyCell = function() {
   var cellList = this.cellList();
   // Does this not work in Chrome?
@@ -122,6 +128,10 @@ Tableau.prototype.cellByCoordinates = function(column, row) {
   return cellList[index];
 };
 
+Tableau.prototype.firstCell = function() {
+  return this.cellByCoordinates(0, 0);
+};
+
 // Find cell below a given cell
 Tableau.prototype.cellBelow = function(cell) {
   // cellList = this.cellList();
@@ -134,13 +144,23 @@ Tableau.prototype.cellBelow = function(cell) {
 
 };
 
-// Add a card to the tableau
-// requires cards.js
-addCard = function(cell, card) {
+// Functions to add cards to the tableau
+// A card can be either clickable or draggable, but not both
+// The library cards.js is required to get card data
+addDraggableCard = function(cell, card) {
     var src = "images/" + card.image;
     var imageNode = document.createElement("img");
     imageNode.setAttribute("src", src);
     imageNode.setAttribute("id", card.id);
     imageNode.addEventListener("dragstart", game.dragstart.bind(card));
+    cell.appendChild(imageNode);
+}
+
+addClickableCard = function(cell, card) {
+    var src = "images/" + card.image;
+    var imageNode = document.createElement("img");
+    imageNode.setAttribute("src", src);
+    imageNode.setAttribute("id", card.id);
+    imageNode.addEventListener("click", game.click.bind(card));
     cell.appendChild(imageNode);
 }

@@ -105,7 +105,8 @@ game.drop = function(event) {
   // If building onto card on foundation, remove existing card
   if(foundation.contains(cell) && cell.tagName == "IMG") {
     cell = cell.parentElement;
-    cell.removeChild(cell.firstChild);
+    // cell.removeChild(cell.firstChild);
+    clearCell(cell);
   }
   // If cell is an image on the board, place card below it
   if(gameBoard.contains(cell) && cell.tagName == "IMG") {
@@ -119,7 +120,7 @@ game.drop = function(event) {
 
 // Deal deck into tableau
 Deck.prototype.deal = function(tableau) {
-  console.log(game);
+  // console.log(game);
   // Get list of cells from tableau
   var cellList = tableau.cellList();
   var cardList = this.list;
@@ -127,9 +128,9 @@ Deck.prototype.deal = function(tableau) {
   if(cardList.length > cellList.length) {
     alert("Too many cards for tableau " + tableau.name);
   }
-  // Deal cards
+  // Deal cards onto tableau
   for(var i in cardList) {
-    addCard(cellList[i], cardList[i]);
+    addDraggableCard(cellList[i], cardList[i]);
   }
 }
 

@@ -15,6 +15,13 @@ Game.prototype.dragstart = function(event) {
 };
 
 // Redefine for particular game
+// "this" will be bound to card being dragged
+Game.prototype.click = function(event) {
+  console.log("This game does not yet allow clicking. ");
+  // event.dataTransfer.setData("text", event.target.id);
+};
+
+// Redefine for particular game
 // "this" will be bound to target tableau
 Game.prototype.dragover = function(event) {
   console.log("This game does not yet allow dragging over. ");

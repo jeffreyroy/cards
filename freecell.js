@@ -1,9 +1,12 @@
-// Card data
+// FreeCell game
+// requires the following libraries:
+// game, cards, tableau, freecellStuff
+type = "freecell";
+
+// Card data for standard 52 card deck
 const SUITS = ["spade", "heart", "diamond", "club"];
 const RANKS = ["ace", "2", "3", "4", "5", "6", "7", "8",
                 "9", "ten", "jack", "queen", "king"];
-
-type = "freecell";
 
 // Generate new deck
 deck = Deck.generate(SUITS, RANKS);

@@ -27,11 +27,14 @@ function Card(suit, rank) {
   }
 }
 
-// Placeholder for overturned card
-var cardBack = {
-  name: "back",
-  id: "back",
-  image: "back.bmp"
+// Class for overturned card
+// Can be treated similarly to a card
+function HiddenCard(card) {
+  this.name = "hidden card";
+  this.id = card.id;
+  this.target = card;
+  this.image = "back.bmp";
+  this.hidden = true;
 }
 
 // Deck class 
@@ -71,7 +74,7 @@ Deck.prototype.shuffle = function() {
 
 // Get next card and remove it from deck
 Deck.prototype.getNextCard = function() {
-  return this.cardList.pop();
+  return this.list.pop();
 }
 
 // Find a card within deck using suit and rank number
