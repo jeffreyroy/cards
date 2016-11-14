@@ -25,6 +25,7 @@ function Card(suit, rank) {
   this.image = this.id + ".bmp";
 }
 
+
 // Deck class 
 function Deck(cardList) {
   this.list = cardList;
@@ -75,8 +76,26 @@ Deck.prototype.deal = function(tableau) {
     var src = "images/" + cardList[i].image;
     var imageNode = document.createElement("img");
     imageNode.setAttribute("src", src);
+    imageNode.setAttribute("id", cardList[i].id);
+    imageNode.addEventListener("click", this.clickie.bind(this));
     cellList[i].appendChild(imageNode);
   }
 }
 
 
+
+// Find a card within deck using id
+Deck.prototype.findCardById = function(id) {
+  for(var i in this.list) {
+    if(this.list[i].id == id) {
+      return this.list[i];
+    }
+  }
+  return nil;
+}
+
+
+Deck.prototype.clickie = function() {
+  var card = this.findCardById(event.target.id);
+  console.log("You clicked " + card.name);
+}
