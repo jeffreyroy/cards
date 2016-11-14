@@ -112,6 +112,16 @@ Tableau.prototype.coordinates = function(cell) {
   return [column, row];
 };
 
+Tableau.prototype.empty = function() {
+  for(var row=0; row < this.rows; row ++) {
+    for(var column=0; column < this.columns; column ++) {
+      currentCell = this.cellByCoordinates(column, row);
+      if(!cellEmpty(currentCell)) { return false; }
+    }
+  }
+  return true;
+};
+
 Tableau.prototype.cellByCoordinates = function(column, row) {
   cellList = this.cellList();
   index = (this.columns * row) + column;

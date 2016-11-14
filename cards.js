@@ -61,29 +61,9 @@ Deck.prototype.shuffle = function() {
   this.list = shuffle(this.list);
 }
 
-// Deal deck into tableau
-// Requires tableau.js
-Deck.prototype.deal = function(tableau) {
-  console.log(game);
-  // Get list of cells from tableau
-  var cellList = document.getElementsByClassName(tableau.name);
-  var cardList = this.list;
-  // Warning if cards don't fit into tableau
-  if(cardList.length > cellList.length) {
-    alert("Too many cards for tableau " + tableau.name);
-  }
-  // Deal cards
-  for(var i in cardList) {
-    card = cardList[i];
-    var src = "images/" + card.image;
-    var imageNode = document.createElement("img");
-    imageNode.setAttribute("src", src);
-    imageNode.setAttribute("id", card.id);
-    imageNode.addEventListener("dragstart", game.dragstart.bind(card));
-    // imageNode.addEventListener("dragover", game.dragstart.bind(imageNode));
-    // imageNode.addEventListener("drop", game.dragstart.bind(imageNode));
-    cellList[i].appendChild(imageNode);
-  }
+// Get next card and remove it from deck
+Deck.prototype.getNextCard = function() {
+  return this.cardList.pop();
 }
 
 // Find a card within deck using suit and rank number
@@ -105,3 +85,4 @@ Deck.prototype.findCardById = function(id) {
   }
   return null;
 }
+

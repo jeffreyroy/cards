@@ -1,12 +1,5 @@
-// Card data
-const SUITS = ["spade", "heart", "diamond", "club"];
-const RANKS = ["ace", "2", "3", "4", "5", "6", "7", "8",
-                "9", "ten", "jack", "queen", "king"];
-
 // Generate new game
 game = new Game();
-
-deck = Deck.generate(SUITS, RANKS);
 
 // Functions for moving cards
 
@@ -22,21 +15,17 @@ obstructed = function(cardImage) {
   return !cellEmpty(lowerCell);
 }
 
-// cardByImage = function(cardImage) {
-//   id = cardImage.id;
-//   return deck.findCardById(id);
-// }
-
 predecessor = function(card) {
   suit = card.suit;
-  console.log(card.rank.number);
+  // console.log(card.rank.number);
   rankNumber = card.rank.number - 1;
   return deck.findCard(suit, rankNumber)
 }
 
-// Run this function when user drags a card
+// This is run when user drags a card
 game.dragstart = function(event) {
   card = event.target;
+  // Check to make sure card can be moved
   if(gameBoard.contains(card)
     && (obstructed(card))) {
     alert("That card can't move.");
@@ -45,13 +34,11 @@ game.dragstart = function(event) {
     alert("That card can't move.");
   }
   else {
+    // If movable, set active card and store data
     game.activeCard = this;
-    // console.log(game.activeCard.name);
     event.dataTransfer.setData("text", event.target.id);
-    
   }
 };
-
 
 // Find valid target cells for a card
 validTarget = function(card, destination) {
@@ -67,39 +54,26 @@ validTarget = function(card, destination) {
     && destination.tagName == "IMG") {
       targetCard = deck.findCardById(destination.id);
       if(targetCard == predecessor(card)) { return true; }
-
   }
   // Below card on board, counting downward
   if(gameBoard.contains(destination)
     && destination.tagName == "IMG"
     && !obstructed(destination)) {
-
-    // && destination.id != card.id
-    // && 
-    // ) { return true; }
       targetCard = deck.findCardById(destination.id);
-      // console.log(predecessor(targetCard));
       if(card == predecessor(targetCard)) { return true; }
-  }
-
-       
+  }  
   return false;
 }
 
+// This is run when user drags a card over a tableau
 game.dragover = function(event) {
-  // Redefine this for a particular game
-  // console.log(event.target);
-
-  // Example:
   if(validTarget(game.activeCard, event.target)) {
     event.preventDefault();
   }
 };
 
+// This is run when user tries to drop a card
 game.drop = function(event) {
-  // console.log("This game does not yet allow dropping. ");
-  // Redefine this for a particular game
-  // Example:
   var cell = event.target;
   // If building onto card on foundation, remove existing card
   if(foundation.contains(cell) && cell.tagName == "IMG") {
@@ -116,12 +90,27 @@ game.drop = function(event) {
   if(won()) { alert("You win!!"); };
 };
 
-// Start the game!
 
-gameBoard = Tableau.generate("board", 0, 100, 8, 13, 60, 20);
-freeCells = Tableau.generate("freecell", 0, 0, 4, 1, 60, 80);
-foundation = Tableau.generate("foundation", 252, 0, 4, 1, 60, 80);
-
-deck.shuffle();
-deck.deal(gameBoard);
+// Deal deck into tableau
+// Requires tableau.js
+Deck.prototype.deal = function(tableau) {
+  console.log(game);
+  // Get list of cells from tableau
+  var cellList = document.getElementsByClassName(tableau.name);
+  var cardList = this.list;
+  // Warning if cards don't fit into tableau
+  if(cardList.length > cellList.length) {
+    alert("Too many cards for tableau " + tableau.name);
+  }
+  // Deal cards
+  for(var i in cardList) {
+    card = cardList[i];
+    var src = "images/" + card.image;
+    var imageNode = document.createElement("img");
+    imageNode.setAttribute("src", src);
+    imageNode.setAttribute("id", card.id);
+    imageNode.addEventListener("dragstart", game.dragstart.bind(card));
+    cellList[i].appendChild(imageNode);
+  }
+}
 
