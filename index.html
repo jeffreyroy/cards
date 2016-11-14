@@ -9,7 +9,11 @@
   <script type="text/javascript" src="defaultDeck.js"></script>
   <script type="text/javascript" src="tableau.js"></script>
   <script type="text/javascript">
-    createTableau("freecell", 0, 0, 3, 13, 60, 20);
+    gameBoard = new Tableau("freecell", 0, 100, 3, 13, 60, 20);
+    gameBoard.appendStyle(0, 100);
+    gameBoard.appendTable(3, 13, 60, 20);
+    deck.shuffle();
+    deck.deal(gameBoard);
 
   </script>
 
