@@ -30,6 +30,25 @@ function Deck(cardList) {
   this.list = cardList;
 }
 
+// Class method to generate new deck using list of
+// suit names and rank names, e.g.
+// suits = ["spades", "hearts", ...]
+// ranks = ["ace", "2", ...]
+Deck.generate = function(suits, ranks) {
+  var deckList = [];
+  var currentSuit, currentRank;
+  // Loop through all suits
+  for(var suit in suits) {
+    currentSuit = new Suit(SUITS[suit]);
+    // Loop through all ranks
+    for(var rank in ranks) {
+      currentRank = new Rank(rank+1, RANKS[rank]);
+      deckList.push(new Card(currentSuit, currentRank));
+    }
+  }
+  return new Deck(deckList);
+}
+
 // Shuffle helper
 shuffle = function(v){
     for(var j, x, i = v.length; i; j = parseInt(Math.random() * i), x = v[--i], v[i] = v[j], v[j] = x);
@@ -46,7 +65,6 @@ Deck.prototype.shuffle = function() {
 Deck.prototype.deal = function(tableau) {
   // Get list of cells from tableau
   var cellList = document.getElementsByClassName(tableau.name);
-  alert(cellList);
   var cardList = this.list;
   // Warning if cards don't fit into tableau
   if(cardList.length > cellList.length) {
