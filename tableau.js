@@ -105,7 +105,7 @@ Tableau.prototype.firstEmptyCell = function() {
 
 Tableau.prototype.coordinates = function(cell) {
   var index = this.indexOf(cell);
-  console.log(index);
+  // console.log(index);
 
   var column = index % this.columns;
   var row = Math.floor(index / this.columns);

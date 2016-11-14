@@ -8,12 +8,10 @@ function Suit(name, char = name[0].toUpperCase(), plural = name + "s") {
 }
 
 // Rank class
-function Rank(number, name = number.toString(), char = name[0].toUpperCase(), predecessor = number - 1, successor = number + 1) {
+function Rank(number, name = number.toString(), char = name[0].toUpperCase()) {
   this.name = name;
   this.char = char;
   this.number = number;
-  predecessor = predecessor;
-  successor = successor;
 }
 
 // Cards class
@@ -44,7 +42,7 @@ Deck.generate = function(suits, ranks) {
   for(var suit in suits) {
     currentSuit = new Suit(SUITS[suit]);
     // Loop through all ranks
-    for(var rank in ranks) {
+    for(var rank = 0; rank < ranks.length; rank++) {
       currentRank = new Rank(rank+1, RANKS[rank]);
       deckList.push(new Card(currentSuit, currentRank));
     }
@@ -88,6 +86,16 @@ Deck.prototype.deal = function(tableau) {
   }
 }
 
+// Find a card within deck using suit and rank number
+Deck.prototype.findCard = function(suit, rankNumber) {
+  for(var i in this.list) {
+    if(this.list[i].suit == suit && this.list[i].rank.number == rankNumber) {
+      return this.list[i];
+    }
+  }
+  return null;
+}
+
 // Find a card within deck using id
 Deck.prototype.findCardById = function(id) {
   for(var i in this.list) {
@@ -95,11 +103,5 @@ Deck.prototype.findCardById = function(id) {
       return this.list[i];
     }
   }
-  return nil;
+  return null;
 }
-
-// Card.prototype.dragstart = function(event) {
-  // Redefine this for particular game
-  // console.log("You clicked " + this.name);
-  // event.dataTransfer.setData("text", event.target.id);
-// }
