@@ -18,13 +18,21 @@ function Rank(number, name = number.toString(), char = name[0].toUpperCase()) {
 function Card(suit, rank) {
   this.suit = suit;
   this.rank = rank;
-  this.name = suit.name + " " + rank.name;
-  // id is abbreviated name, e.g. "sa" for ace of spades
-  this.id = suit.char + rank.char;
-  // Use id for image name
-  this.image = this.id + ".bmp";
+  if(suit) {
+    this.name = suit.name + " " + rank.name;
+    // id is abbreviated name, e.g. "sa" for ace of spades
+    this.id = suit.char + rank.char;
+    // Use id for image name
+    this.image = this.id + ".bmp";
+  }
 }
 
+// Placeholder for overturned card
+var cardBack = {
+  name: "back",
+  id: "back",
+  image: "back.bmp"
+}
 
 // Deck class 
 function Deck(cardList) {

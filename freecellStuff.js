@@ -90,13 +90,11 @@ game.drop = function(event) {
   if(won()) { alert("You win!!"); };
 };
 
-
 // Deal deck into tableau
-// Requires tableau.js
 Deck.prototype.deal = function(tableau) {
   console.log(game);
   // Get list of cells from tableau
-  var cellList = document.getElementsByClassName(tableau.name);
+  var cellList = tableau.cellList();
   var cardList = this.list;
   // Warning if cards don't fit into tableau
   if(cardList.length > cellList.length) {
@@ -104,13 +102,9 @@ Deck.prototype.deal = function(tableau) {
   }
   // Deal cards
   for(var i in cardList) {
-    card = cardList[i];
-    var src = "images/" + card.image;
-    var imageNode = document.createElement("img");
-    imageNode.setAttribute("src", src);
-    imageNode.setAttribute("id", card.id);
-    imageNode.addEventListener("dragstart", game.dragstart.bind(card));
-    cellList[i].appendChild(imageNode);
+    addCard(cellList[i], cardList[i]);
   }
 }
+
+
 

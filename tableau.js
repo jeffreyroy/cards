@@ -42,12 +42,6 @@ Tableau.prototype.appendTable = function(cellWidth, cellHeight) {
       // Set dimensions of div
       currentDiv.style.height = cellHeight + "px";
       currentDiv.style.width = cellWidth + "px";
-
-      // Add images for testing purposes
-      // var currentImg = document.createElement("img");
-      // currentImg.setAttribute("src", "images/back.bmp");
-      // Append to table
-      // currentDiv.appendChild(currentImg);
       currentCell.appendChild(currentDiv);
       currentRow.appendChild(currentCell);
     }
@@ -139,3 +133,14 @@ Tableau.prototype.cellBelow = function(cell) {
   return this.cellByCoordinates(column, row);
 
 };
+
+// Add a card to the tableau
+// requires cards.js
+addCard = function(cell, card) {
+    var src = "images/" + card.image;
+    var imageNode = document.createElement("img");
+    imageNode.setAttribute("src", src);
+    imageNode.setAttribute("id", card.id);
+    imageNode.addEventListener("dragstart", game.dragstart.bind(card));
+    cell.appendChild(imageNode);
+}
