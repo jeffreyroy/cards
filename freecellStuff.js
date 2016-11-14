@@ -1,6 +1,9 @@
 // Generate new game
 game = new Game();
 
+// type = "baker" for Baker's Game or "freecell" for FreeCell
+var type = "baker";
+
 // Functions for moving cards
 
 // Check for win
@@ -20,6 +23,30 @@ predecessor = function(card) {
   // console.log(card.rank.number);
   rankNumber = card.rank.number - 1;
   return deck.findCard(suit, rankNumber)
+}
+
+// Find color of suit
+Suit.prototype.color = function() {
+  switch(this.name) {
+    case "spade":
+    case "club":
+      return "black";
+    case "heart":
+    case "diamond":
+      return "red";
+  }
+}
+
+playableOn = function(card, targetCard) {
+  // Baker's Game
+  if(type == "baker") {
+    return card == predecessor(targetCard);
+  }
+  // Freecell
+  else {
+    return ( card.suit.color() != targetCard.suit.color() 
+      && card.rank.number == targetCard.rank.number - 1);
+  }
 }
 
 // This is run when user drags a card
@@ -60,7 +87,7 @@ validTarget = function(card, destination) {
     && destination.tagName == "IMG"
     && !obstructed(destination)) {
       targetCard = deck.findCardById(destination.id);
-      if(card == predecessor(targetCard)) { return true; }
+      if(playableOn(card, targetCard)) { return true; }
   }  
   return false;
 }

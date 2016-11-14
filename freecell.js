@@ -3,8 +3,10 @@ const SUITS = ["spade", "heart", "diamond", "club"];
 const RANKS = ["ace", "2", "3", "4", "5", "6", "7", "8",
                 "9", "ten", "jack", "queen", "king"];
 
+type = "freecell";
+
 // Generate new deck
-deck = Deck.generate(SUITS, RANKS)
+deck = Deck.generate(SUITS, RANKS);
 
 // Add tableaux to DOM
 gameBoard = Tableau.generate("board", 0, 100, 8, 13, 60, 20);
