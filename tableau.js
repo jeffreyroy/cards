@@ -1,12 +1,16 @@
 // Constructor function for tableau
-function Tableau(name, left, top, columns, rows, width, height) {
+// function Tableau(name, left, top, columns, rows, width, height) {
+//   this.name = name;  // Must be unique
+//   this.left = left;  // Location of left edge
+//   this.top = top;   // Location of top edge
+//   this.columns = columns;  // Number of columns
+//   this.rows = rows;  // Number of rows
+//   this.width = width;  // Width of cell (card is 60px)
+//   this.height = height;  // Height of cell (card is 80px)
+// }
+
+function Tableau(name) {
   this.name = name;  // Must be unique
-  this.left = left;  // Location of left edge
-  this.top = top;   // Location of top edge
-  this.columns = columns;  // Number of columns
-  this.rows = rows;  // Number of rows
-  this.width = width;  // Width of cell (card is 60px)
-  this.height = height;  // Height of cell (card is 80px)
 }
 
 // Create style tag to position table
@@ -53,4 +57,12 @@ Tableau.prototype.appendTable = function(columns, rows, width, height) {
   }
   // Append table to body of document
   document.body.appendChild(newTable);
+};
+
+// Class method to generate tableau and place it on the DOM
+Tableau.generate = function(name, left, top, columns, rows, width, height) {
+  newTableau = new Tableau(name);
+  newTableau.appendStyle(left, top);
+  newTableau.appendTable(columns, rows, width, height);
+  return newTableau
 };
