@@ -1,19 +1,14 @@
 // Constructor function for tableau
-// function Tableau(name, left, top, columns, rows, width, height) {
-//   this.name = name;  // Must be unique
-//   this.left = left;  // Location of left edge
-//   this.top = top;   // Location of top edge
-//   this.columns = columns;  // Number of columns
-//   this.rows = rows;  // Number of rows
-//   this.width = width;  // Width of cell (card is 60px)
-//   this.height = height;  // Height of cell (card is 80px)
-// }
-
-function Tableau(name) {
+// with specified number of rows and columns
+function Tableau(name, columns, rows) {
   this.name = name;  // Must be unique
+  this.columns = columns;
+  this.rows = rows;
+  this.activeCard = null;
 }
 
-// Create style tag to position table
+// Create style tag to position tableau
+// left, top indicate the location of the upper left corner
 Tableau.prototype.appendStyle = function(left, top) {
   var tableauStyle = document.createElement("style");
   tableauStyle.type = "text/css";
@@ -29,24 +24,26 @@ Tableau.prototype.appendStyle = function(left, top) {
 };
 
 // Append table to DOM
-Tableau.prototype.appendTable = function(columns, rows, width, height) {
+// cellWidth, cellHeight are dimensions of table cells
+Tableau.prototype.appendTable = function(cellWidth, cellHeight) {
   // Create table
   var newTable = document.createElement("table");
   newTable.setAttribute("id", this.name);
+  newTable.setAttribute("class", "tableau");
   // Append table entries
-  for(var row=0; row < rows; row ++) {
+  for(var row=0; row < this.rows; row ++) {
     var currentRow = document.createElement("tr");
-    for(var column=0; column < columns; column ++) {
+    for(var column=0; column < this.columns; column ++) {
       // Create table entry
       var currentCell = document.createElement("td");
       // Create div within table entry
       var currentDiv = document.createElement("div");
       currentDiv.setAttribute("class", this.name);
       // Set dimensions of div
-      currentDiv.style.height = height + "px";
-      currentDiv.style.width = width + "px";
-      currentDiv.addEventListener("drop", this.drop.bind(this));
-      currentDiv.addEventListener("dragover", this.dragover.bind(this));
+      currentDiv.style.height = cellHeight + "px";
+      currentDiv.style.width = cellWidth + "px";
+      currentDiv.addEventListener("drop", game.drop.bind(this));
+      currentDiv.addEventListener("dragover", game.dragover.bind(this));
 
       // Add images for testing purposes
       // var currentImg = document.createElement("img");
@@ -62,30 +59,49 @@ Tableau.prototype.appendTable = function(columns, rows, width, height) {
   document.body.appendChild(newTable);
 };
 
-// Helper to determine whether a cell is a valid target
-Tableau.prototype.validTarget = function(card, destination) {
-  return destination.className == this.name;
-};
-
-Tableau.prototype.dragover = function(event) {
-  console.log(event.target.className);
-  if(this.validTarget(null, event.target)) {
-    event.preventDefault();
-  }
-};
-
-Tableau.prototype.drop = function(event) {
-  var cell = event.target;
-  // Clear the cell
-  // cell.removeChild(cell.firstChild);
-  var data = event.dataTransfer.getData("text");
-  cell.appendChild(document.getElementById(data));
-};
-
 // Class method to generate tableau and place it on the DOM
 Tableau.generate = function(name, left, top, columns, rows, width, height) {
-  newTableau = new Tableau(name);
+  newTableau = new Tableau(name, columns, rows);
   newTableau.appendStyle(left, top);
-  newTableau.appendTable(columns, rows, width, height);
+  newTableau.appendTable(width, height);
   return newTableau
+};
+
+Tableau.prototype.cellList = function() {
+  return document.getElementsByClassName(this.name);
+};
+
+Tableau.prototype.indexOf = function(cell) {
+  var cellList = this.cellList();
+  for(i = 0; i < cellList.length; i++) {
+    if(cellList[i] == cell) { return i; }
+  }
+  return -1;
+};
+
+Tableau.prototype.contains = function(cell) {
+  return this.indexOf(cell) >= 0;
+};
+
+var cellEmpty = function(cell) {
+  return cell.firstChild == null;
+};
+
+Tableau.prototype.firstEmptyCell = function() {
+  var cellList = this.cellList();
+  // Does this not work in Chrome?
+  // return cellList.find(cellEmpty);
+  for(var i in cellList) {
+    if(cellEmpty(cellList[i])) {
+      return cellList[i];
+    }
+  }
+  return nil;
+};
+
+// Find cell below a given cell
+Tableau.prototype.cellBelow = function(cell) {
+  cellList = this.cellList();
+  var index = this.indexOf(cell);
+  return cellList[index + this.columns]
 };

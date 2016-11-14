@@ -1,3 +1,5 @@
+// Definition of playing cards and decks
+
 // Suit class
 function Suit(name, char = name[0].toUpperCase(), plural = name + "s") {
   this.name = name;
@@ -64,6 +66,7 @@ Deck.prototype.shuffle = function() {
 // Deal deck into tableau
 // Requires tableau.js
 Deck.prototype.deal = function(tableau) {
+  console.log(game);
   // Get list of cells from tableau
   var cellList = document.getElementsByClassName(tableau.name);
   var cardList = this.list;
@@ -73,16 +76,17 @@ Deck.prototype.deal = function(tableau) {
   }
   // Deal cards
   for(var i in cardList) {
-    var src = "images/" + cardList[i].image;
+    card = cardList[i];
+    var src = "images/" + card.image;
     var imageNode = document.createElement("img");
     imageNode.setAttribute("src", src);
-    imageNode.setAttribute("id", cardList[i].id);
-    imageNode.addEventListener("dragstart", this.dragstart.bind(this));
+    imageNode.setAttribute("id", card.id);
+    imageNode.addEventListener("dragstart", game.dragstart.bind(card));
+    imageNode.addEventListener("dragover", game.dragstart.bind(imageNode));
+    imageNode.addEventListener("drop", game.dragstart.bind(imageNode));
     cellList[i].appendChild(imageNode);
   }
 }
-
-
 
 // Find a card within deck using id
 Deck.prototype.findCardById = function(id) {
@@ -94,9 +98,8 @@ Deck.prototype.findCardById = function(id) {
   return nil;
 }
 
-
-Deck.prototype.dragstart = function(event) {
-  var card = this.findCardById(event.target.id);
-  console.log("You clicked " + card.name);
-  event.dataTransfer.setData("text", event.target.id);
-}
+// Card.prototype.dragstart = function(event) {
+  // Redefine this for particular game
+  // console.log("You clicked " + this.name);
+  // event.dataTransfer.setData("text", event.target.id);
+// }
