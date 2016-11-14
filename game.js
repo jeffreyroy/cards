@@ -15,18 +15,18 @@ Game.prototype.dragstart = function(event) {
 };
 
 // Redefine for particular game
-// "this" will be bound to target div in DOM
+// "this" will be bound to target tableau
 Game.prototype.dragover = function(event) {
   console.log("This game does not yet allow dragging over. ");
 
   // Example:
-  // if(this.validTarget(null, event.target)) {
+  // if(validTarget(null, event.target)) {
   //   event.preventDefault();
   // }
 };
 
 // Redefine for particular game
-// "this" will be bound to target div in DOM
+// "this" will be bound to target tableau
 Game.prototype.drop = function(event) {
   console.log("This game does not yet allow dropping. ");
   // Example:

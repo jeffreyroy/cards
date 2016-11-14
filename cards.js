@@ -82,8 +82,8 @@ Deck.prototype.deal = function(tableau) {
     imageNode.setAttribute("src", src);
     imageNode.setAttribute("id", card.id);
     imageNode.addEventListener("dragstart", game.dragstart.bind(card));
-    imageNode.addEventListener("dragover", game.dragstart.bind(imageNode));
-    imageNode.addEventListener("drop", game.dragstart.bind(imageNode));
+    // imageNode.addEventListener("dragover", game.dragstart.bind(imageNode));
+    // imageNode.addEventListener("drop", game.dragstart.bind(imageNode));
     cellList[i].appendChild(imageNode);
   }
 }

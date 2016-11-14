@@ -3,35 +3,52 @@ const RANKS = ["ace", "2", "3", "4", "5", "6", "7", "8",
                 "9", "ten", "jack", "queen", "king"];
 game = new Game();
 
+// Check whether card is obstructed (i.e. is under another card)
+obstructed = function(cardImage) {
+  lowerCell = gameBoard.cellBelow(cardImage.parentElement);
+  // console.log(lowerCell);
+  return !cellEmpty(lowerCell);
+}
+
+// Run this function when user drags a card
 game.dragstart = function(event) {
-  game.activeCard = this;
-  console.log(game.activeCard.name);
-  event.dataTransfer.setData("text", event.target.id);
+  card = event.target;
+  if(obstructed(card)) {
+    alert("That card can't move.");
+  }
+  else {
+    game.activeCard = this;
+    console.log(game.activeCard.name);
+    event.dataTransfer.setData("text", event.target.id);
+    
+  }
 };
 
+// Find valid target cells for a card
 validTarget = function(card, destination) {
-  // Target is the first empty freecell
+  // First empty freecell
   if(destination == freeCells.firstEmptyCell()) { return true; }
-  // Target is the foundation and foundation is empty
+  // Empty foundation
   if(destination == foundation.firstEmptyCell()) { return true; }
-  // if(destination.tagName == "IMG" && gameBoard.contains(destination)) {
-  //   var div = destination.parentElement;
-  //   console.log(div);
-  //   if(cellEmpty(gameBoard.cellBelow(div))) { return true; }
-  if(gameBoard.contains(destination)) {
-    // console.log(gameBoard.cellBelow(destination));
-    if(cellEmpty(gameBoard.cellBelow(destination))) { return true; }
-  }
+  // Top of empty column
+  if(destination == gameBoard.firstEmptyCell()) { return true; }
+
+  // Below card on board
+  if(gameBoard.contains(destination)
+    && destination.tagName == "IMG"
+    && destination.id != card.id
+    && !obstructed(destination)) { return true; }
+
        
   return false;
 }
 
 game.dragover = function(event) {
   // Redefine this for a particular game
-  console.log(event.target);
+  // console.log(event.target);
 
   // Example:
-  if(validTarget(null, event.target)) {
+  if(validTarget(game.activeCard, event.target)) {
     event.preventDefault();
   }
 };
@@ -41,6 +58,10 @@ game.drop = function(event) {
   // Redefine this for a particular game
   // Example:
   var cell = event.target;
+  // If cell is an image on the board, place card below it
+  if(cell.tagName == "IMG") {
+    cell = gameBoard.cellBelow(cell.parentElement);
+  }
   var data = event.dataTransfer.getData("text");
   cell.appendChild(document.getElementById(data));
 };

@@ -42,8 +42,6 @@ Tableau.prototype.appendTable = function(cellWidth, cellHeight) {
       // Set dimensions of div
       currentDiv.style.height = cellHeight + "px";
       currentDiv.style.width = cellWidth + "px";
-      currentDiv.addEventListener("drop", game.drop.bind(this));
-      currentDiv.addEventListener("dragover", game.dragover.bind(this));
 
       // Add images for testing purposes
       // var currentImg = document.createElement("img");
@@ -54,6 +52,8 @@ Tableau.prototype.appendTable = function(cellWidth, cellHeight) {
       currentRow.appendChild(currentCell);
     }
     newTable.appendChild(currentRow);
+    newTable.addEventListener("drop", game.drop.bind(this));
+    newTable.addEventListener("dragover", game.dragover.bind(this));
   }
   // Append table to body of document
   document.body.appendChild(newTable);
@@ -79,8 +79,12 @@ Tableau.prototype.indexOf = function(cell) {
   return -1;
 };
 
+Tableau.prototype.tableElement = function() {
+  return document.getElementById(this.name);
+};
+
 Tableau.prototype.contains = function(cell) {
-  return this.indexOf(cell) >= 0;
+  return this.tableElement().contains(cell);
 };
 
 var cellEmpty = function(cell) {
@@ -99,9 +103,29 @@ Tableau.prototype.firstEmptyCell = function() {
   return nil;
 };
 
+Tableau.prototype.coordinates = function(cell) {
+  var index = this.indexOf(cell);
+  console.log(index);
+
+  var column = index % this.columns;
+  var row = Math.floor(index / this.columns);
+  return [column, row];
+};
+
+Tableau.prototype.cellByCoordinates = function(column, row) {
+  cellList = this.cellList();
+  index = (this.columns * row) + column;
+  return cellList[index];
+};
+
 // Find cell below a given cell
 Tableau.prototype.cellBelow = function(cell) {
-  cellList = this.cellList();
-  var index = this.indexOf(cell);
-  return cellList[index + this.columns]
+  // cellList = this.cellList();
+  // var index = this.indexOf(cell);
+  // return cellList[index + this.columns]
+  coord = this.coordinates(cell);
+  column = coord[0];
+  row = coord[1] + 1;
+  return this.cellByCoordinates(column, row);
+
 };
