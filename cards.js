@@ -8,25 +8,34 @@ function Suit(name, char = name[0].toUpperCase(), plural = name + "s") {
 }
 
 // Rank class
-function Rank(number, name = number.toString(), char = name[0].toUpperCase(), predecessor = number - 1, successor = number + 1) {
+function Rank(number, name = number.toString(), char = name[0].toUpperCase()) {
   this.name = name;
   this.char = char;
   this.number = number;
-  predecessor = predecessor;
-  successor = successor;
 }
 
 // Cards class
 function Card(suit, rank) {
   this.suit = suit;
   this.rank = rank;
-  this.name = suit.name + " " + rank.name;
-  // id is abbreviated name, e.g. "sa" for ace of spades
-  this.id = suit.char + rank.char;
-  // Use id for image name
-  this.image = this.id + ".bmp";
+  if(suit) {
+    this.name = suit.name + " " + rank.name;
+    // id is abbreviated name, e.g. "sa" for ace of spades
+    this.id = suit.char + rank.char;
+    // Use id for image name
+    this.image = this.id + ".bmp";
+  }
 }
 
+// Class for overturned card
+// Can be treated similarly to a card
+function HiddenCard(card) {
+  this.name = "hidden card";
+  this.id = card.id;
+  this.target = card;
+  this.image = "back.bmp";
+  this.hidden = true;
+}
 
 // Deck class 
 function Deck(cardList) {
@@ -44,7 +53,7 @@ Deck.generate = function(suits, ranks) {
   for(var suit in suits) {
     currentSuit = new Suit(SUITS[suit]);
     // Loop through all ranks
-    for(var rank in ranks) {
+    for(var rank = 0; rank < ranks.length; rank++) {
       currentRank = new Rank(rank+1, RANKS[rank]);
       deckList.push(new Card(currentSuit, currentRank));
     }
@@ -63,29 +72,19 @@ Deck.prototype.shuffle = function() {
   this.list = shuffle(this.list);
 }
 
-// Deal deck into tableau
-// Requires tableau.js
-Deck.prototype.deal = function(tableau) {
-  console.log(game);
-  // Get list of cells from tableau
-  var cellList = document.getElementsByClassName(tableau.name);
-  var cardList = this.list;
-  // Warning if cards don't fit into tableau
-  if(cardList.length > cellList.length) {
-    alert("Too many cards for tableau " + tableau.name);
+// Get next card and remove it from deck
+Deck.prototype.getNextCard = function() {
+  return this.list.pop();
+}
+
+// Find a card within deck using suit and rank number
+Deck.prototype.findCard = function(suit, rankNumber) {
+  for(var i in this.list) {
+    if(this.list[i].suit == suit && this.list[i].rank.number == rankNumber) {
+      return this.list[i];
+    }
   }
-  // Deal cards
-  for(var i in cardList) {
-    card = cardList[i];
-    var src = "images/" + card.image;
-    var imageNode = document.createElement("img");
-    imageNode.setAttribute("src", src);
-    imageNode.setAttribute("id", card.id);
-    imageNode.addEventListener("dragstart", game.dragstart.bind(card));
-    // imageNode.addEventListener("dragover", game.dragstart.bind(imageNode));
-    // imageNode.addEventListener("drop", game.dragstart.bind(imageNode));
-    cellList[i].appendChild(imageNode);
-  }
+  return null;
 }
 
 // Find a card within deck using id
@@ -95,11 +94,6 @@ Deck.prototype.findCardById = function(id) {
       return this.list[i];
     }
   }
-  return nil;
+  return null;
 }
 
-// Card.prototype.dragstart = function(event) {
-  // Redefine this for particular game
-  // console.log("You clicked " + this.name);
-  // event.dataTransfer.setData("text", event.target.id);
-// }

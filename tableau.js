@@ -42,12 +42,6 @@ Tableau.prototype.appendTable = function(cellWidth, cellHeight) {
       // Set dimensions of div
       currentDiv.style.height = cellHeight + "px";
       currentDiv.style.width = cellWidth + "px";
-
-      // Add images for testing purposes
-      // var currentImg = document.createElement("img");
-      // currentImg.setAttribute("src", "images/back.bmp");
-      // Append to table
-      // currentDiv.appendChild(currentImg);
       currentCell.appendChild(currentDiv);
       currentRow.appendChild(currentCell);
     }
@@ -91,6 +85,12 @@ var cellEmpty = function(cell) {
   return cell.firstChild == null;
 };
 
+var clearCell = function(cell) {
+ while(cell.firstChild) {
+  cell.removeChild(cell.firstChild);
+ }
+};
+
 Tableau.prototype.firstEmptyCell = function() {
   var cellList = this.cellList();
   // Does this not work in Chrome?
@@ -105,17 +105,31 @@ Tableau.prototype.firstEmptyCell = function() {
 
 Tableau.prototype.coordinates = function(cell) {
   var index = this.indexOf(cell);
-  console.log(index);
+  // console.log(index);
 
   var column = index % this.columns;
   var row = Math.floor(index / this.columns);
   return [column, row];
 };
 
+Tableau.prototype.empty = function() {
+  for(var row=0; row < this.rows; row ++) {
+    for(var column=0; column < this.columns; column ++) {
+      currentCell = this.cellByCoordinates(column, row);
+      if(!cellEmpty(currentCell)) { return false; }
+    }
+  }
+  return true;
+};
+
 Tableau.prototype.cellByCoordinates = function(column, row) {
   cellList = this.cellList();
   index = (this.columns * row) + column;
   return cellList[index];
+};
+
+Tableau.prototype.firstCell = function() {
+  return this.cellByCoordinates(0, 0);
 };
 
 // Find cell below a given cell
@@ -129,3 +143,24 @@ Tableau.prototype.cellBelow = function(cell) {
   return this.cellByCoordinates(column, row);
 
 };
+
+// Functions to add cards to the tableau
+// A card can be either clickable or draggable, but not both
+// The library cards.js is required to get card data
+addDraggableCard = function(cell, card) {
+    var src = "images/" + card.image;
+    var imageNode = document.createElement("img");
+    imageNode.setAttribute("src", src);
+    imageNode.setAttribute("id", card.id);
+    imageNode.addEventListener("dragstart", game.dragstart.bind(card));
+    cell.appendChild(imageNode);
+}
+
+addClickableCard = function(cell, card) {
+    var src = "images/" + card.image;
+    var imageNode = document.createElement("img");
+    imageNode.setAttribute("src", src);
+    imageNode.setAttribute("id", card.id);
+    imageNode.addEventListener("click", game.click.bind(card));
+    cell.appendChild(imageNode);
+}
