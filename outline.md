@@ -18,4 +18,4 @@ To Do
   Method to move card to new location
   Method to automatically move card to obvious location
   Method for player loss (no movable cards)
-  Move stack of cards in Klondike
+  Move stack of cards in Klondike - done!
