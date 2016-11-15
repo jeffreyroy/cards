@@ -87,12 +87,24 @@ drawNextCard = function(cardImage) {
   refreshDrawPile();
 }
 
+// Turn over facedown card at bottom of column
+turnOver = function(cardImage) {
+  var card = fullDeck.findCardById(cardImage.id);
+  var cell = cardImage.parentElement;
+  clearCell(cell);
+  addDraggableCard(cell, card);
+}
+
 // This is run when user clicks a face down card
 game.click = function(event) {
   var card = event.target;
   // If on draw pile, turn face up and put in discard pile
   if(drawPile.contains(card)) {
     drawNextCard(card);
+  }
+  // If at bottom of column in tableau, turn it over
+  else if(gameBoard.contains(card) && !obstructed(card)) {
+    turnOver(card);
   }
   else {
     alert("That card can't be moved yet. ");
@@ -163,10 +175,17 @@ game.drop = function(event) {
   // Put card in new location
   var data = event.dataTransfer.getData("text");
   cell.appendChild(document.getElementById(data));
+  // If moving from discard pile, replace with next card
+  var l = discardList.length;
+  if(l > 0 && discardList[l - 1] == game.activeCard) {
+    discardList.pop();
+    if(l > 1) {
+      nextCard = discardList[l - 2]
+      addDraggableCard(discardPile.firstCell(), nextCard);
+    }
+  }
   if(won()) { alert("You win!!"); };
 };
-
-
 
 // Card data for standard 52 card deck
 const SUITS = ["spade", "heart", "diamond", "club"];
