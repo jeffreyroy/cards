@@ -1,9 +1,12 @@
 // Generate new game
 game = new Game();
 
+// Variable to hold group of cards being moved
+game.activeGroup = [];
+game.activeCell = null;
+
+
 // Functions for moving cards
-
-
 
 Deck.prototype.deal = function(tableau) {
   var cellList = tableau.cellList();
@@ -33,11 +36,16 @@ won = function() {
   return drawPile.empty() && discardPile.empty() && gameBoard.empty();
 }
 
+// Returns card image obstructing (i.e. immediately covering)
+// a specified card image on the board
+obstructor = function(cardImage) {
+  var lowerCell = gameBoard.cellBelow(cardImage.parentElement);
+  return lowerCell.firstChild;
+}
+
 // Check whether card is obstructed (i.e. is under another card)
 obstructed = function(cardImage) {
-  lowerCell = gameBoard.cellBelow(cardImage.parentElement);
-  // console.log(lowerCell);
-  return !cellEmpty(lowerCell);
+  return obstructor(cardImage) != null;
 }
 
 predecessor = function(card) {
@@ -51,6 +59,25 @@ playableOn = function(card, targetCard) {
   return ( targetCard != null && card.suit.color() != targetCard.suit.color() 
     && card.rank.number == targetCard.rank.number - 1);
 }
+
+// // Recursive function to check whether card is part of sequence
+// inSequence(cardImage) {
+//   // Base case:  Card is at bottom of column
+//   var nextCardImage = obstructor(cardImage);
+//   if(nextCardImage == null) { return true; }
+
+//   // Recursive case:  Card is obstructed
+//   // Check to see whether obstruction is in sequence
+//   else {
+//     var card = fullDeck.findCardById(cardImage.id);
+//     var nextCard = fullDeck.findCardById(nextCardImage.id);
+//     // If next card is in sequence, recur
+//     if(playableOn(nextCard, card)) { return inSequence(nextCard); }
+//     // Otherwise, return false
+//     else { return false; }
+//   }
+// }
+
 
 // Find color of suit
 Suit.prototype.color = function() {
@@ -95,6 +122,18 @@ turnOver = function(cardImage) {
   addDraggableCard(cell, card);
 }
 
+// Get cards below specified card
+getGroup = function(cardImage) {
+  var currentCard = cardImage;
+  var group = [];
+  while(obstructed(currentCard)) {
+    var nextCard = obstructor(currentCard);
+    group.push(nextCard);
+    currentCard = nextCard;
+  }
+  return group;
+}
+
 // This is run when user clicks a face down card
 game.click = function(event) {
   var card = event.target;
@@ -115,17 +154,21 @@ game.click = function(event) {
 game.dragstart = function(event) {
   card = event.target;
   // Check to make sure card can be moved
-  if(gameBoard.contains(card)
-    && (obstructed(card))) {
-    alert("That card can't move.");
-  }
   if(foundation.contains(card)) {
     alert("That card can't move.");
   }
   else {
-    // If movable, set active card and store data
+    // Set active card and store data
     game.activeCard = this;
     event.dataTransfer.setData("text", event.target.id);
+      game.activeCell = card.parentElement;
+    // Get type of move (single card or stack)
+    // if(gameBoard.contains(card)
+      // && (obstructed(card))) {
+    // }
+    // else {
+      // game.activeGroup = [];
+    // }
   }
 };
 
@@ -175,6 +218,21 @@ game.drop = function(event) {
   // Put card in new location
   var data = event.dataTransfer.getData("text");
   cell.appendChild(document.getElementById(data));
+  // If moving stack, move remainder of stack
+  // Note: This seems extremely inelegant.
+  // Can cells be selected and moved as a group
+  // using drag and drop?  I haven't found a way
+  if(gameBoard.contains(cell)
+    && gameBoard.contains(game.activeCell)) {
+    var startCell = gameBoard.cellBelow(game.activeCell);
+    var destCell = gameBoard.cellBelow(cell);
+    while(!cellEmpty(startCell)) {
+      moveCard(startCell.firstChild, destCell);
+      startCell = gameBoard.cellBelow(startCell);
+      destCell = gameBoard.cellBelow(destCell);
+    }
+  }
+
   // If moving from discard pile, replace with next card
   var l = discardList.length;
   if(l > 0 && discardList[l - 1] == game.activeCard) {
@@ -201,7 +259,7 @@ fullDeck = Deck.generate(SUITS, RANKS);
 deck = new Deck(fullDeck.list.slice());
 
 // Add tableaux to DOM
-gameBoard = Tableau.generate("board", 0, 100, 7, 13, 60, 20);
+gameBoard = Tableau.generate("board", 0, 100, 7, 20, 60, 20);
 drawPile = Tableau.generate("drawpile", 0, 0, 1, 1, 60, 80);
 discardPile = Tableau.generate("discardpile", 63, 0, 1, 1, 60, 80);
 foundation = Tableau.generate("foundation", 189, 0, 4, 1, 60, 80);

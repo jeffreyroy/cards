@@ -90,6 +90,11 @@ var clearCell = function(cell) {
   cell.removeChild(cell.firstChild);
  }
 };
+ 
+var moveCard = function(cardImage, destinationCell) {
+  clearCell(destinationCell);
+  destinationCell.appendChild(cardImage);
+};
 
 Tableau.prototype.firstEmptyCell = function() {
   var cellList = this.cellList();
