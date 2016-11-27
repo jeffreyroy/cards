@@ -37,24 +37,31 @@ Tableau.prototype.appendTable = function(cellWidth, cellHeight) {
   for(var row=0; row < this.rows; row ++) {
     var currentRow = document.createElement("tr");
     for(var column=0; column < this.columns; column ++) {
-      // Create table entry
-      var currentCell = document.createElement("td");
-      // Create div within table entry
-      var currentDiv = document.createElement("div");
-      currentDiv.setAttribute("class", this.name);
-      // Set dimensions of div
-      currentDiv.style.height = cellHeight + "px";
-      currentDiv.style.width = cellWidth + "px";
-      currentCell.appendChild(currentDiv);
-      currentRow.appendChild(currentCell);
+      var newCell = this.addCell(cellWidth, cellHeight);
+      currentRow.appendChild(newCell);
     }
     newTable.appendChild(currentRow);
-    newTable.addEventListener("drop", game.drop.bind(this));
-    newTable.addEventListener("dragover", game.dragover.bind(this));
   }
+  // Add event listeners to table
+  newTable.addEventListener("drop", game.drop.bind(this));
+  newTable.addEventListener("dragover", game.dragover.bind(this));
   // Append table to body of document
   document.body.appendChild(newTable);
 };
+
+// Generate tableau cell
+Tableau.prototype.addCell = function(cellWidth, cellHeight) {
+  // Create table entry
+  var currentCell = document.createElement("td");
+  // Create div within table entry
+  var currentDiv = document.createElement("div");
+  currentDiv.setAttribute("class", this.name);
+  // Set dimensions of div
+  currentDiv.style.height = cellHeight + "px";
+  currentDiv.style.width = cellWidth + "px";
+  currentCell.appendChild(currentDiv);
+  return currentCell;
+}
 
 // Class method to generate tableau and place it on the DOM
 Tableau.generate = function(name, left, top, columns, rows, width, height) {
