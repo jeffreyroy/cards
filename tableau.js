@@ -10,6 +10,8 @@ function Tableau(name, columns, rows) {
   this.activeCard = null;
 }
 
+// 1. Functions to generate a tableau
+
 // Create style tag to position tableau
 // left, top indicate the location of the upper left corner
 Tableau.prototype.appendStyle = function(left, top) {
@@ -43,6 +45,7 @@ Tableau.prototype.appendTable = function(cellWidth, cellHeight) {
     newTable.appendChild(currentRow);
   }
   // Add event listeners to table
+  // Requires game.js
   newTable.addEventListener("drop", game.drop.bind(this));
   newTable.addEventListener("dragover", game.dragover.bind(this));
   // Append table to body of document
@@ -70,6 +73,8 @@ Tableau.generate = function(name, left, top, columns, rows, width, height) {
   newTableau.appendTable(width, height);
   return newTableau
 };
+
+// 2. Functions to access information in tableau
 
 // List of cells in tableau
 Tableau.prototype.cellList = function() {
@@ -105,7 +110,7 @@ Tableau.prototype.firstEmptyCell = function() {
       return cellList[i];
     }
   }
-  return nil;
+  return null;
 };
 
 // Returns coordinates of specified cell within tableau
@@ -167,7 +172,7 @@ var moveCard = function(cardImage, destinationCell) {
   destinationCell.appendChild(cardImage);
 };
 
-// Functions to add cards to the tableau
+// 3. Functions to add cards to the tableau
 // A card can be either clickable or draggable, but not both
 // The library cards.js is required to get card data
 
