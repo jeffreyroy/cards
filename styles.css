@@ -1,7 +1,36 @@
 body {
   background-color: darkgreen;
+  font-family: sans-serif;
 }
 
 .tableau td {
 
+}
+
+.menu-button {
+  height: 2em;
+  width: 5em;
+  background-color: white;
+  border-radius: 3px;
+  font-size: 14px;
+}
+
+.menu-button:hover {
+    background-color: darkblue; /* Green */
+    color: white;
+}
+
+
+.blackjack-score {
+  position: absolute;
+  top: 120px;
+  left: 130px;
+  font-size: 36px;
+  color: yellow;
+}
+
+.blackjack-menu {
+  position: absolute;
+  top: 180px;
+  left: 80px;
 }
