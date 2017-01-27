@@ -20,6 +20,14 @@ body {
     color: white;
 }
 
+#blurb {
+  position: absolute;
+  top: 340px;
+  left: 20px;
+  font-size: 24px;
+  color: yellow;
+}
+
 
 #blackjack-score {
   position: absolute;
@@ -33,4 +41,11 @@ body {
   position: absolute;
   top: 180px;
   left: 80px;
+}
+
+#blackjack-reset {
+  position: absolute;
+  top: 180px;
+  left: 120px;
+  visibility: hidden;
 }

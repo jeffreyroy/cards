@@ -24,6 +24,14 @@ var playerBoard = Tableau.generate("player-board", 100, 250, 10, 1, 20, 80);
 playerCards = [];
 computerCards = [];
 
+hide = function(id) {
+  document.getElementById(id).style.visibility = "hidden";
+}
+
+show = function(id) {
+  document.getElementById(id).style.visibility = "visible";
+}
+
 Deck.prototype.dealCard = function(tableau, cell) {
   var card = this.getNextCard();
   addCard(cell, card);
@@ -44,13 +52,24 @@ Deck.prototype.deal = function(tableau) {
   }
 }
 
+// Calculate score for player
 score = function(player) {
   var total = 0;
+  var aces = 0;
   cards = player == "computer" ? computerCards : playerCards;
   for (var i = 0; i < cards.length; i++) {
     // console.log(cards[i].rank.number);
-    t = Math.min(cards[i].rank.number, 10);
+    var t = Math.min(cards[i].rank.number, 10);
     total += t;
+    // Check for aces
+    if( t == 1 ) {
+      aces ++;
+    }
+  }
+  // Score aces as high as possible, keeping total under 21
+  if(total < 21) {
+    var maxAces = Math.floor( (21 - total) / 10 );
+    total += 10 * Math.min(aces, maxAces)
   }
   return total;
 }
@@ -59,17 +78,27 @@ updateScore = function() {
   document.getElementById("blackjack-score").innerHTML = score("player");
 }
 
-clearBoard = function() {
+updateBlurb = function(blurb) {
+  document.getElementById("blurb").innerHTML = blurb;
+}
+
+endGame = function(message) {
+  updateBlurb(message);
+  hide("blackjack-menu");
+  show("blackjack-reset");
+}
+
+dealBoard = function() {
   playerBoard.clear();
   computerBoard.clear();
   playerCards = [];
   computerCards = [];
-}
-
-dealBoard = function() {
   deck.deal(computerBoard);
   deck.deal(playerBoard);
   updateScore();
+  updateBlurb("Do you want to hit or stay?")
+  hide("blackjack-reset");
+  show("blackjack-menu");
 }
 
 hit = function(tableau) {
@@ -78,13 +107,35 @@ hit = function(tableau) {
   updateScore();
 }
 
+computerMove = function() {
+  while(score("computer") < 17) {
+    hit(computerBoard);
+  }
+  compareScores();
+}
+
+compareScores = function() {
+  var cs = score("computer");
+  var ps = score("player");
+  var blurb = "";
+  if(cs == ps) { blurb = "Push!  We each have " + cs + "."; }
+  else if(cs > ps) { blurb = "My " + cs + " beats your " + ps + "!"; }
+  else { blurb = "Your " + ps + " beats my " + cs + "!"; }
+  endGame(blurb);
+}
+
 document.getElementById("hit-button").addEventListener("click", function(){
   hit(playerBoard);
-
+  if(score("player") > 21 ) {
+    endGame("You're busted!")
+  }
 });
 
 document.getElementById("stay-button").addEventListener("click", function(){
-  clearBoard();
+  computerMove();
+});
+
+document.getElementById("reset-button").addEventListener("click", function(){
   dealBoard();
 });
 
