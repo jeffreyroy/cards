@@ -21,7 +21,7 @@ body {
 }
 
 
-.blackjack-score {
+#blackjack-score {
   position: absolute;
   top: 120px;
   left: 130px;
@@ -29,7 +29,7 @@ body {
   color: yellow;
 }
 
-.blackjack-menu {
+#blackjack-menu {
   position: absolute;
   top: 180px;
   left: 80px;

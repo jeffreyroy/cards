@@ -81,7 +81,7 @@ Tableau.prototype.cellList = function() {
   return document.getElementsByClassName(this.name);
 };
 
-// Helper function retruns index of cell within tableau
+// Helper function returns index of cell within tableau
 Tableau.prototype.indexOf = function(cell) {
   var cellList = this.cellList();
   for(i = 0; i < cellList.length; i++) {
@@ -154,6 +154,14 @@ Tableau.prototype.cellBelow = function(cell) {
   row = coord[1] + 1;
   return this.cellByCoordinates(column, row);
 
+};
+
+// Clear tableau
+Tableau.prototype.clear = function() {
+  var cells = this.cellList();
+  for (var i = 0; i < cells.length; i++) {
+    clearCell(cells[i]);
+  }
 };
 
 // Helper functions for using cells
