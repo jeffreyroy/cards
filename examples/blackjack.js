@@ -96,7 +96,7 @@ dealBoard = function() {
   deck.deal(computerBoard);
   deck.deal(playerBoard);
   updateScore();
-  updateBlurb("Do you want to hit or stay?")
+  updateBlurb("Do you want to hit or stand?")
   hide("blackjack-reset");
   show("blackjack-menu");
 }
@@ -118,7 +118,8 @@ compareScores = function() {
   var cs = score("computer");
   var ps = score("player");
   var blurb = "";
-  if(cs == ps) { blurb = "Push!  We each have " + cs + "."; }
+  if(cs > 21) { blurb = "I'm busted!"; }
+  else if(cs == ps) { blurb = "Push!  We each have " + cs + "."; }
   else if(cs > ps) { blurb = "My " + cs + " beats your " + ps + "!"; }
   else { blurb = "Your " + ps + " beats my " + cs + "!"; }
   endGame(blurb);
@@ -131,7 +132,7 @@ document.getElementById("hit-button").addEventListener("click", function(){
   }
 });
 
-document.getElementById("stay-button").addEventListener("click", function(){
+document.getElementById("stand-button").addEventListener("click", function(){
   computerMove();
 });
 
