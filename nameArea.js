@@ -19,16 +19,14 @@ NameArea.prototype.appendStyle = function(left, top) {
   document.getElementsByTagName('head')[0].appendChild(nameStyle);
 };
 
-
-// Append table to DOM
-// cellWidth, cellHeight are dimensions of table cells
+// Append name area to DOM
 NameArea.prototype.appendElement = function() {
-  // Create table
+  // Create div
   var newDiv = document.createElement("div");
   newDiv.setAttribute("id", this.name);
   newDiv.setAttribute("class", "nameArea");
   newDiv.innerHTML = this.name;
-  // Append table to body of document
+  // Append div to body of document
   document.body.appendChild(newDiv);
 };
 
@@ -39,3 +37,10 @@ NameArea.generate = function(name, left, top) {
   newNameArea.appendElement();
   return newNameArea
 };
+
+// Add or change text following name
+NameArea.prototype.appendText = function(text) {
+  var node = document.getElementById(this.name);
+  node.innerHTML = this.name + text;
+};
+
