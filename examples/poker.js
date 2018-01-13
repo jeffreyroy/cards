@@ -1,7 +1,6 @@
 /// Card data
 // Generate new game
 var game = new Game();
-const INCREMENT = 100;  // Bet increment
 
 // Card data for standard 52 card deck
 const SUITS = ["spade", "heart", "diamond", "club"];
@@ -12,7 +11,8 @@ const RANKS = ["2", "3", "4", "5", "6", "7", "8",
 // Full deck for card lookup
 fullDeck = Deck.generate(SUITS, RANKS);
 
-// Global variables for current hand
+/// Global variables for current hand
+const INCREMENT = 100;  // Bet increment
 totalBet = 0;
 pot = 0;
 bettingRound = 0;
@@ -26,7 +26,6 @@ initDeck = function() {
 }
 
 // Common cards
-
 var commonCards = Tableau.generate("player-board", 180, 150, 5, 1, 20, 80);
 
 
@@ -34,13 +33,13 @@ var commonCards = Tableau.generate("player-board", 180, 150, 5, 1, 20, 80);
 
 // List of players and tableau locations
 const PLAYERDATA = [
-  { name: "Player", left: 200, top: 300 },
-  { name: "Alice", left: 100, top: 0 },
-  { name: "Bob", left: 300, top: 0 },
-  { name: "Charlie", left: 0, top: 100 },
-  { name: "Debra", left: 400, top: 100 },
-  { name: "Ellen", left: 0, top: 200 },
-  { name: "Frank", left: 400, top: 200 }
+  { name: "Player", left: 200, top: 300, firstBet: 0 },
+  { name: "Alice", left: 400, top: 200, firstBet: 0 },
+  { name: "Bob", left: 400, top: 100, firstBet: 0 },
+  { name: "Charlie", left: 300, top: 0, firstBet: 0 },
+  { name: "Debra", left: 100, top: 0, firstBet: 0 },
+  { name: "Ellen", left: 0, top: 100, firstBet: 50 },
+  { name: "Frank", left: 0, top: 200, firstBet: 100 }
 ]
 
 var playerList = []
@@ -76,19 +75,41 @@ Player.prototype.getBet = function(round) {
 
 Player.prototype.firstRoundBet = function() {
   var hand = this.fullHand();
-  var highRank = hand[0].rank.char;
-  var lowRank = hand[1].rank.char;
   console.log(hand[0].id + " " + hand[1].id);
-  // Raise if pair
-  if(highRank == lowRank) { this.raise(); }
-  // Call if high card is ace
-  else if(highRank == "A") { this.call(); }
-  // Call if suits are the same
-  else if(hand[0].suit == hand[1].suit) { this.call(); }
+  // Get value of opening hand
+  var value = chenValue(hand);
+
+  console.log("Value: " + value);
+  // Raise with good hand
+  if( value >= 9) { this.raise(); }
+  // Call with okay hand
+  else if(value >= 6) { this.call(); }
   // Otherwise fold
   else { this.fold(); }
 }
 
+// Use Bill Chen's formula to value opening hand
+chenValue = function(hand) {
+  var high = hand[0].rank.number
+  var low = hand[1].rank.number
+  // Get value of high card
+  const HIGHCARDVALUE = [0, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8, 10]
+  var value = HIGHCARDVALUE[high]
+  // Multiply by two if pair
+  if(high == low) {
+    value = Math.max(value * 2, 5);
+  }
+  // Add 2 if suited
+  if(hand[0].suit == hand[1].suit) {
+    value += 2;
+  }
+  // Reduce value if gapped
+  const GAPVALUE = [1, 1, -1, -2, -4];
+  var gap = high - low;
+  if(gap <= 4) { value += GAPVALUE[gap]; }
+  else { value -= 5; }
+  return value;
+}
 
 
 // Methods to change bet
@@ -99,11 +120,13 @@ Player.prototype.makeBet = function(n) {
 }
 
 Player.prototype.raise = function() {
+  console.log(this.name + " raises.");
   totalBet += INCREMENT;
   this.call();
 }
 
 Player.prototype.call = function() {
+  console.log(this.name + " calls.");
   this.makeBet(totalBet - this.bet);
 }
 
@@ -122,11 +145,24 @@ var generatePlayers = function() {
     player.tableau = Tableau.generate("board-" + i, data.left, data.top, 5, 1, 20, 80);
     player.nameArea = NameArea.generate(data.name, data.left + 20, data.top + 82);
     player.nameArea.appendStyle;
-    player.makeBet(0);
     // Add player to list
     playerList.push(player);
+    player.makeBet(300);
   }
 }
+
+// Get bets for all players
+getPlayerBets = function() {
+  var n = PLAYERDATA.length - 1;
+  for(i=1; i<=n; i++) {
+    var currentPlayer = playerList[i];
+    if (currentPlayer.bet > -1) {
+      currentPlayer.getBet(bettingRound);
+    }
+  }
+}
+
+/// Methods to deal cards to tableau
 
 hide = function(id) {
   document.getElementById(id).style.visibility = "hidden";
@@ -141,23 +177,6 @@ Deck.prototype.dealCard = function(player, cell) {
   addCard(cell, card);
   player.cardList.push(card);
 }
-
-// Deck.prototype.deal = function(tableau) {
-//   row = 0
-//   // Deal cards onto tableau
-//   for(var column = 0; column < 2; column++) {
-//     var cell = tableau.cellByCoordinates(column, row);
-//     this.dealCard(tableau, cell);
-//   }
-// }
-
-// clearBoard = function() { 
-//   for(i=0; i<playerList.length; i++) {
-//     player = playerList[i];
-//     player.tableau.clear();
-//     player.cardList = [];
-//   }
-// }
 
 deal = function(player, hide) {
   console.log("Dealing " + player.name);
@@ -204,27 +223,19 @@ dealCommon = function() {
   commonList.push(card);
 }
 
-// Get bets for all players
-getPlayerBets = function() {
-  var n = PLAYERDATA.length - 1;
-  for(i=1; i<=n; i++) {
-    var currentPlayer = playerList[i];
-    if (currentPlayer.bet > -1) {
-      currentPlayer.getBet(bettingRound);
-    }
-  }
-}
-
-
+/// Event listeners
 
 document.getElementById("bet-button").addEventListener("click", function(){
-  totalBet += 100;
-  pot += 100;
+  // Make bet for player
+  playerList[0].raise();
   console.log("Total bet: " + totalBet);
+  // Get bets for other players
   getPlayerBets();
 });
 
 document.getElementById("check-button").addEventListener("click", function(){
+  // Make bet for player
+  playerList[0].call();
   hide("poker-bet");
   show("poker-menu");
   dealCommon();
@@ -235,7 +246,7 @@ document.getElementById("call-button").addEventListener("click", function(){
 });
 
 
-// Start new game
+/// Start new game
 initDeck();
 generatePlayers();
 dealBoard();
