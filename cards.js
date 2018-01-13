@@ -97,3 +97,8 @@ Deck.prototype.findCardById = function(id) {
   return null;
 }
 
+// Compare value of two cards, for use in sorting
+Deck.prototype.compareRank = function(firstCard, secondCard) {
+  return firstCard.rank.number - secondCard.rank.number;
+}
+
